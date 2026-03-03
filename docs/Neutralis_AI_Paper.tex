@@ -89,11 +89,11 @@ Anthropic introduced the Model Context Protocol (MCP) in 2024~\cite{b8}. It defi
 
 The system is an MCP server. It talks to AI assistants over JSON-RPC through standard I/O, which is how MCP works. Fig.~\ref{fig:arch} shows the overall layout.
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=\columnwidth]{img/thumbnail.png}}
+\begin{figure*}[htbp]
+\centerline{\includegraphics[width=0.85\textwidth]{img/thumbnail.png}}
 \caption{Architecture of Neutralis-AI. The MCP server sits between the AI assistant and the user, routing conversations through Gemini for ethical analysis.}
 \label{fig:arch}
-\end{figure}
+\end{figure*}
 
 \subsection{Component overview}
 
@@ -135,88 +135,55 @@ In practice, this means the system develops a sense of what matters for a partic
 
 \section{Algorithm}
 
-Algorithm~\ref{alg:neutralis} describes the full pipeline, from server startup through tool dispatch, weighted analysis, and pattern learning.
+Algorithm~\ref{alg:neutralis} describes the pipeline from tool invocation through weighted analysis and pattern storage.
 
 \begin{algorithm}[htbp]
-\caption{Neutralis-AI: MCP-Based Ethical Oversight for AI Conversations}
+\caption{Neutralis-AI: MCP-Based Ethical Oversight}
 \label{alg:neutralis}
 \begin{algorithmic}[1]
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
-\REQUIRE $K = \{k_1, k_2, \ldots, k_n\}$ \COMMENT{Gemini API keys}
-\REQUIRE $conv$ \COMMENT{conversation context from AI assistant}
-\REQUIRE $req$ \COMMENT{original user request}
-\REQUIRE $tool$ \COMMENT{tool name invoked via MCP}
-\ENSURE $result$ \COMMENT{ethical analysis, bias report, guidance, or log confirmation}
-
-\STATE \textbf{// Server Initialization}
-\STATE $keys \leftarrow \text{parse}(K)$; $idx \leftarrow 0$
-\STATE $gemini \leftarrow \text{initModel}(keys[idx])$
-\STATE $memory \leftarrow \text{loadConcerns}()$ \COMMENT{from file or in-memory}
-\STATE Register tools: \{ethics\_check, critical\_thinking, ethics\_guide, ethics\_learn\}
-\STATE Start MCP transport over stdio
-
+\REQUIRE $K = \{k_1, \ldots, k_n\}$ (API keys), $conv$ (conversation),
+\REQUIRE $req$ (user request), $tool$ (MCP tool name)
+\ENSURE $result$ (analysis or log confirmation)
 \STATE
-\STATE \textbf{// On Tool Invocation}
 \STATE \textbf{function} \textsc{HandleRequest}($tool, conv, req, ctx$)
-\IF{$tool$ = ``ethics\_check''}
-    \STATE $W \leftarrow \text{\textsc{GetWeighted}}(memory, ctx, \{0.25, 0.35, 0.20, 0.20\})$
-    \STATE $prompt \leftarrow \text{buildEthicsPrompt}(conv, req, W)$
-    \STATE $result \leftarrow \text{\textsc{CallGemini}}(prompt)$
-    \IF{autoStore = true}
-        \FOR{each $c$ in $result.concerns$}
-            \STATE \textsc{StoreConcern}($c, memory$)
-        \ENDFOR
-    \ENDIF
-\ELSIF{$tool$ = ``critical\_thinking''}
-    \STATE $W_b \leftarrow \text{\textsc{GetWeighted}}(memory, ctx, \{0.40, 0.20, 0.30, 0.10\})$
-    \STATE $W_s \leftarrow \text{\textsc{GetSessionPatterns}}(sessionId)$
-    \STATE $prompt \leftarrow \text{buildBiasPrompt}(conv, req, W_b, W_s)$
-    \STATE $result \leftarrow \text{\textsc{CallGemini}}(prompt)$
-\ELSIF{$tool$ = ``ethics\_guide''}
-    \STATE $W_g \leftarrow \text{\textsc{GetWeighted}}(memory, ctx, \{0.25, 0.25, 0.35, 0.15\})$
-    \STATE $stats \leftarrow \text{getCategoryStats}(memory)$
-    \STATE $prompt \leftarrow \text{buildGuidePrompt}(scenario, domain, W_g, stats)$
-    \STATE $result \leftarrow \text{\textsc{CallGemini}}(prompt)$
-\ELSIF{$tool$ = ``ethics\_learn''}
-    \STATE \textsc{StoreConcern}($\{concern, category, severity, rec\}, memory$)
-    \STATE $result \leftarrow \text{getCategoryStats}(memory)$
+\STATE $w \leftarrow \text{weights}(tool)$ \COMMENT{per-tool weight config}
+\STATE $W \leftarrow \text{\textsc{GetWeighted}}(memory, ctx, w)$
+\STATE $prompt \leftarrow \text{buildPrompt}(tool, conv, req, W)$
+\IF{$tool$ = ``ethics\_learn''}
+    \STATE \textsc{StoreConcern}($concern, memory$)
+    \RETURN getCategoryStats($memory$)
+\ENDIF
+\STATE $result \leftarrow \text{\textsc{CallGemini}}(prompt)$
+\IF{$tool$ = ``ethics\_check'' \AND autoStore}
+    \FOR{each $c$ in $result.concerns$}
+        \STATE \textsc{StoreConcern}($c, memory$)
+    \ENDFOR
 \ENDIF
 \RETURN $result$
-
 \STATE
-\STATE \textbf{// Weighted Pattern Scoring}
 \STATE \textbf{function} \textsc{GetWeighted}($memory, ctx, w$)
 \FOR{each concern $c$ in $memory$}
-    \STATE $r \leftarrow e^{-age(c) \;/\; (maxAge \times 0.3)}$ \COMMENT{recency}
-    \STATE $s \leftarrow \text{severityMap}(c.severity)$ \COMMENT{0.25--1.0}
-    \STATE $u \leftarrow c.successScore$ \COMMENT{default 0.5}
-    \STATE $v \leftarrow \text{relevance}(c, ctx)$ \COMMENT{category + session + text sim}
-    \STATE $c.total \leftarrow w_r \cdot r + w_s \cdot s + w_u \cdot u + w_v \cdot v$
+    \STATE $c.score \leftarrow w_r \cdot e^{-age(c)/\tau} + w_s \cdot sev(c)$
+    \STATE \hspace{\algorithmicindent} $+ \; w_u \cdot c.success + w_v \cdot rel(c, ctx)$
 \ENDFOR
-\STATE Sort by $total$ descending; return top-$k$
-
+\RETURN top-$k$ by score
 \STATE
-\STATE \textbf{// Store with Duplicate Detection}
 \STATE \textbf{function} \textsc{StoreConcern}($c, memory$)
-\FOR{each existing $e$ in $memory$ (last 24h)}
-    \IF{$\text{similarity}(c, e) > 0.9$ \OR ($\text{sameSession}$ \AND $\text{similarity} > 0.8$)}
-        \RETURN skip \COMMENT{duplicate}
-    \ENDIF
-\ENDFOR
-\STATE Append $c$ to $memory$; persist to disk
-
+\IF{$\exists \, e \in memory$: $sim(c,e) > 0.9$ within 24h}
+    \RETURN \COMMENT{skip duplicate}
+\ENDIF
+\STATE Append $c$ to $memory$; persist
 \STATE
-\STATE \textbf{// Gemini Call with Key Rotation}
 \STATE \textbf{function} \textsc{CallGemini}($prompt$)
-\FOR{$i = 1$ to $|keys|$}
-    \STATE $idx \leftarrow (idx + 1) \mod |keys|$
-    \STATE $resp \leftarrow \text{gemini}[idx].\text{generate}(prompt)$
-    \IF{success}
-        \RETURN $\text{parseJSON}(resp)$
+\FOR{$i = 1$ to $|K|$}
+    \STATE $idx \leftarrow (idx + 1) \bmod |K|$
+    \IF{$K[idx]$.generate($prompt$) succeeds}
+        \RETURN parseJSON(response)
     \ENDIF
 \ENDFOR
-\STATE \textbf{raise} ``All API keys exhausted''
+\STATE \textbf{raise} error
 \end{algorithmic}
 \end{algorithm}
 

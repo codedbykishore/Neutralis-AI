@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2026.3.3)  3 MAR 2026 10:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2026.3.3)  3 MAR 2026 11:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -536,83 +536,23 @@ f-dist/fonts/enc/dvips/base/8r.enc}
 File: img/thumbnail.png Graphic file (type png)
 <use img/thumbnail.png>
 Package pdftex.def Info: img/thumbnail.png  used on input line 93.
-(pdftex.def)             Requested size: 252.0pt x 141.75023pt.
+(pdftex.def)             Requested size: 438.60315pt x 246.71687pt.
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
 20.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-[2 <./img/thumbnail.png (PNG copy)>]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 141.
 LaTeX Font Info:    Trying to load font information for OMS+ptm on input line 1
-46.
+51.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 146.
-
-Underfull \hbox (badness 10000) in paragraph at lines 156--157
-[] []\OT1/ptm/m/n/10 Register tools: \OMS/cmsy/m/n/10 f\OT1/ptm/m/n/10 ethics[]
-check, crit-i-cal[]thinking,
- []
-
-
-Overfull \hbox (29.79749pt too wide) in paragraph at lines 163--164
-[] []$\OML/cmm/m/it/10 W \OMS/cmsy/m/n/10   []\OT1/cmr/m/n/10 (\OML/cmm/m/it/10
- memory; ctx; \OMS/cmsy/m/n/10 f\OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n
-/10 25\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 35\
-OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 20\OML/cmm
-/m/it/10 ; \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 20\OMS/cmsy/m/n/1
-0 g\OT1/cmr/m/n/10 )$
- []
-
-
-Overfull \hbox (32.42525pt too wide) in paragraph at lines 172--173
-[] []$\OML/cmm/m/it/10 W[] \OMS/cmsy/m/n/10   []\OT1/cmr/m/n/10 (\OML/cmm/m/it/
-10 memory; ctx; \OMS/cmsy/m/n/10 f\OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m
-/n/10 40\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 2
-0\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 30\OML/c
-mm/m/it/10 ; \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 10\OMS/cmsy/m/n
-/10 g\OT1/cmr/m/n/10 )$
- []
-
-
-Overfull \hbox (33.06104pt too wide) in paragraph at lines 177--178
-[] []$\OML/cmm/m/it/10 W[] \OMS/cmsy/m/n/10   []\OT1/cmr/m/n/10 (\OML/cmm/m/it/
-10 memory; ctx; \OMS/cmsy/m/n/10 f\OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m
-/n/10 25\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 2
-5\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 35\OML/c
-mm/m/it/10 ; \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 15\OMS/cmsy/m/n
-/10 g\OT1/cmr/m/n/10 )$
- []
-
-
-Overfull \hbox (25.593pt too wide) in paragraph at lines 179--180
-[] []$\OML/cmm/m/it/10 prompt \OMS/cmsy/m/n/10   []\OT1/cmr/m/n/10 (\OML/cmm/m/
-it/10 scenario; domain; W[]; stats\OT1/cmr/m/n/10 )$
- []
-
-
-Overfull \hbox (41.29791pt too wide) in paragraph at lines 182--183
-[] []\OT1/ptm/m/sc/10 StoreConcern\OT1/ptm/m/n/10 ($\OMS/cmsy/m/n/10 f\OML/cmm/
-m/it/10 concern; category; severity; rec\OMS/cmsy/m/n/10 g\OML/cmm/m/it/10 ; me
-mory$\OT1/ptm/m/n/10 )
- []
-
-
-Underfull \hbox (badness 3907) in paragraph at lines 203--203
-[] []\OT1/ptm/b/n/10 if $[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 c; e\OT1/cmr/m/n/1
-0 ) \OML/cmm/m/it/10 > \OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 9$ \O
-T1/ptm/b/n/10 or \OT1/ptm/m/n/10 ($[]$ \OT1/ptm/b/n/10 and
- []
-
-
-LaTeX Warning: Float too large for page by 280.29472pt on input line 221.
-
-[3] [4]
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 151.
+ [2] [3 <./img/thumbnail.png (PNG copy)>] [4]
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -631,13 +571,13 @@ Package rerunfilecheck Info: File `Neutralis_AI_Paper.out' has not changed.
 (rerunfilecheck)             Checksum: AD4798513B0C47328817ABDBFAB40C28;4014.
  ) 
 Here is how much of TeX's memory you used:
- 12786 strings out of 477985
- 199223 string characters out of 5839381
- 1887388 words of memory out of 6000000
+ 12760 strings out of 477985
+ 198885 string characters out of 5839381
+ 1876388 words of memory out of 6000000
  32697 multiletter control sequences out of 15000+600000
  557754 words of font info for 123 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 75i,11n,76p,835b,621s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,76p,835b,547s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share
 /texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texliv
@@ -648,10 +588,10 @@ pe1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
 /utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></
 usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texli
 ve/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Neutralis_AI_Paper.pdf (5 pages, 425143 bytes).
+Output written on Neutralis_AI_Paper.pdf (5 pages, 419028 bytes).
 PDF statistics:
- 316 PDF objects out of 1000 (max. 8388607)
- 283 compressed objects within 3 object streams
- 111 named destinations out of 1000 (max. 500000)
+ 285 PDF objects out of 1000 (max. 8388607)
+ 252 compressed objects within 3 object streams
+ 85 named destinations out of 1000 (max. 500000)
  238 words of extra memory for PDF output out of 10000 (max. 10000000)
 

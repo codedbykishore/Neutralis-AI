@@ -67,7 +67,7 @@ We tested this with Claude and Cursor over several weeks. Some of what we found 
 
 \section{Related Work}
 
-The sycophancy problem and the broader question of AI ethics have both received significant attention in recent years. We draw on four areas.
+Sycophancy in AI and AI ethics more broadly have both attracted serious research in recent years. We draw on four areas.
 
 \subsection{Sycophancy in language models}
 
@@ -131,7 +131,7 @@ We wrote separate system prompts for each tool. The ethics check prompt tells Ge
 
 The learning tool stores concerns in an in-memory log. Each entry has a text description, a category, a severity score (1 to 10), a weight, and a timestamp. The weight starts equal to the severity and goes up every time a similar concern appears. When the analysis engine runs, it pulls relevant past entries and feeds them into the prompt alongside the current conversation. Higher-weight concerns get more emphasis.
 
-In practice, this means the system develops a sense of what matters for a particular user or workspace. A team that frequently discusses hiring will find the system paying closer attention to discrimination patterns over time, without anyone needing to configure anything.
+In practice, this means the system develops a sense of what matters for a particular user or workspace. A team that frequently discusses hiring will find the system paying closer attention to discrimination patterns over time, without any manual configuration.
 
 \section{Algorithm}
 
@@ -235,7 +235,13 @@ Manipulation patterns & 74\% & 11\% \\
 \end{center}
 \end{table}
 
-Privacy was the easiest category. Names, addresses, medical details---these have clear textual signals and Gemini caught most of them. Confirmation bias detection also worked well, because the structure of a sycophantic exchange (user states opinion, assistant agrees) is recognizable.
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{img/Confusion-Matrix.png}}
+\caption{Detection outcomes per ethical category across 150 test conversations. Each quadrant shows the count of correctly flagged (TP), falsely flagged (FP), missed (FN), and correctly ignored (TN) cases.}
+\label{fig:confusion}
+\end{figure}
+
+Privacy was the easiest category. Names, addresses, and medical details all have clear textual signals and Gemini caught most of them. Confirmation bias detection also worked well, because the structure of a sycophantic exchange (user states opinion, assistant agrees) is recognizable.
 
 Misinformation was the weakest spot, with an 18\% false positive rate. Gemini sometimes flagged statements that were actually correct, and other times missed claims that were wrong but plausible-sounding. We suspect this will improve as the underlying model improves, but for now, misinformation results need to be taken with some skepticism.
 
@@ -244,6 +250,12 @@ Misinformation was the weakest spot, with an 18\% false positive rate. Gemini so
 The weighted learning worked roughly as we hoped. We ran ten sessions simulating a recruiter who kept asking the assistant to help screen candidates. The detection weight for employment discrimination patterns climbed from 6.0 to 8.7 over those sessions. By session seven or eight, the system was catching subtle age and gender bias in job description language that it had missed entirely in session one.
 
 Whether this generalizes to other domains we do not yet know. Our testing was limited.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{img/Line-chart.png}}
+\caption{Pattern weight progression for employment discrimination categories over ten consecutive recruiter sessions. Weight climbs from 6.0 to 8.7 as the system encounters repeated instances of the same bias type.}
+\label{fig:learning}
+\end{figure}
 
 \subsection{Integration}
 
@@ -254,6 +266,12 @@ This unpredictability is a real limitation. We have no control over when the ass
 \subsection{Latency}
 
 Each call to Gemini added 1.5 to 4 seconds of latency, depending on how much context we sent. For conversational use, this felt acceptable. Nobody complained about response times during testing. The round-robin key rotation kept us from hitting rate limits during longer sessions.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{img/Latency-Bar-chart.png}}
+\caption{Average response latency per tool across 50 test calls. \texttt{ethics\_learn} makes no Gemini API call and runs in under 100\,ms. All AI-backed tools stay within the 4-second ceiling observed during testing.}
+\label{fig:latency}
+\end{figure}
 
 \subsection{What does not work}
 

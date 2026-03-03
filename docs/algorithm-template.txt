@@ -1,0 +1,283 @@
+Algorithm 1: An IoT-Integrated Predictive Analytics System for Cost-Effective Early Detection of Sub-Clinical Mastitis in Dairy Cattle
+
+Input:
+    s = {EC, PH}       // Sensors
+    e32, cld, mdl      // ESP32, Cloud, XGBoost model
+Output:
+risk_level, alert
+
+1.  function COLLECT_DATA(sensors)
+2.       dl ← []
+3.       for each sensor ∈ sensors do
+4.            d ← read(sensor)
+5.            append(dl, d)
+6.       end for
+7.       return dl
+8.  end function
+
+9.  function ANALYZE_MILK(dl)
+10.     ec ← extract(dl, "EC")
+11.     ph ← extract(dl, "PH")
+12.     pred ← mdl.predict({ec, ph})
+13.     if pred ≥ th_high then
+14.          alert("High Mastitis Risk")
+15.     else if pred ≥ th_med then
+16.          alert("Moderate Risk – Monitor")
+17.     else
+18.          alert("Low Risk")
+19.     end if
+20.     send_to_cloud({ec, ph, pred})
+21.  end function
+
+22.  function CLOUD_ANALYTICS()
+23.     hist ← get_hist()
+24.     trends ← analyze(hist)
+25.     dash ← render(trends)
+26.     notify(farmer, trends)
+27.  end function
+
+Algorithm 1: Agentic iNtegrated aGriculture: Unified Reasoning for Actuation and Market
+
+Input:
+    • Sensor streams:
+S={SM,PH,EC,TMP,HUM,LW,WIND}S = \{SM, PH, EC, TMP, HUM, LW, WIND\}S={SM,PH,EC,TMP,HUM,LW,WIND}
+    • Imagery: IUAV,ISATI_{UAV}, I_{SAT}IUAV​,ISAT​ with NDVI/EVI/LAI
+    • Traps & vision: T={counts,species,heatmap}T = \{counts, species, heatmap\}T={counts,species,heatmap}
+    • Weather forecast WfW_fWf​ (rain_prob, ET0, wind)
+    • Market data M={pricet,costs,capacity}M = \{price_t, costs, capacity\}M={pricet​,costs,capacity}
+    • Policy set Π\PiΠ (safety limits, legal labels, geofences)
+    • Model set M\mathcal{M}M (stress CNN/ViT, LSTM-XGB yield, RL irrigation, route optimizer)
+    • State store Σ\SigmaΣ (field zones, growth stage, inventory)
+Output:
+    • AIRR​: irrigation schedule (zone→duty-cycle, duration)
+    • APESTA_{PEST}APEST​: spray/biocontrol prescription & routes
+    • AYLDA_{YLD}AYLD​: yield forecast by plot/lot
+    • AMKTA_{MKT}AMKT​: allocation plan (sell/hold/store), logistics schedule
+    • L\mathcal{L}L: audit logs, justifications, hashes
+
+1  function INGEST_AND_ALIGN(S, I_UAV, I_SAT, T, W_f, Σ):
+2      D_s   ← read_streams(S)                   // sensor frames with timestamps
+3      Iu    ← preprocess_uav(I_UAV)             // radiometric corr, georegister
+4      Is    ← preprocess_sat(I_SAT)             // cloud mask, resample
+5      Ndvi  ← compute_indices(Iu, Is)           // NDVI/EVI/LAI stacks
+6      Traps ← normalize_trap_feed(T)            // counts/species per grid
+7      Z     ← zone_map(Σ.fields, Ndvi.bounds)   // vector grid of zones
+8      return {D_s, Ndvi, Traps, Z, W_f}
+
+9  function DIAGNOSE_CROP_HEALTH(D_s, Ndvi, Traps, Z, 𝓜):
+10     Fz ← fuse_features_by_zone(D_s, Ndvi, Traps, Z)
+11     H  ← 𝓜.stress_model.predict(Fz)           // stress class & severity σ
+12     C  ← 𝓜.cause_classifier(H, Fz)            // abiotic/biotic/root cause
+13     Q  ← quality_metrics(H, C)                // conf, drift, coverage
+14     return {H, C, Q, Fz}
+
+15 function PLAN_IRRIGATION(Fz, W_f, Π, 𝓜, Σ):
+16     SWD ← compute_swd(Fz.soil, W_f)           // soil water deficit per zone
+17     P   ← 𝓜.rl_irrigation.policy(SWD, W_f, Σ.stage)
+18     P'  ← apply_rules(P, Π.irrigation)        // rain_prob, wind, tariff windows
+19     if confidence(P) < Π.min_conf then P' ← fallback_schedule(Σ)
+20     return A_IRR ← finalize_valves(P')
+
+21 function PLAN_PEST_RESPONSE(H, C, Traps, Π, 𝓜, W_f):
+22     if C.type = "biotic" or Traps.density > Π.trap_thresh:
+23         Rx  ← 𝓜.prescription(H.severity, species=Traps.species, stage=Σ.stage)
+24         Rx' ← enforce_label_rules(Rx, Π.labels)   // MRL, PHI, re-entry
+25         if W_f.wind > Π.max_wind then return hold_action("wind")
+26         Routes ← 𝓜.route_optimizer(Z, no_fly=Π.geofence, buffer=Π.waterways)
+27         return A_PEST ← {Rx', Routes}
+28     else:
+29         return A_PEST ← monitor_only()
+
+30 function FORECAST_YIELD(Fz, Σ, 𝓜):
+31     A   ← assemble_timeseries(Fz, ops=Σ.history)
+32     Ŷ   ← 𝓜.yield_model.predict(A)              // by zone → lot mapping
+33     return A_YLD ← Ŷ
+
+34 function MARKET_DECISIONS(A_YLD, M, Π, Σ):
+35     U   ← build_utility(M.prices, costs=M.costs, risk=Π.cvar)
+36     Plan← optimize_allocation(A_YLD, capacity=Σ.storage, U, spoilage=Σ.loss)
+37     return A_MKT ← Plan
+
+38 function SAFETY_AND_COMPLIANCE(A_IRR, A_PEST, Π):
+39     ok1 ← validate_hard_limits(A_IRR, Π.irrigation)
+40     ok2 ← validate_safety(A_PEST, Π.labels, Π.weather, Π.geofence)
+41     if not(ok1 and ok2) then
+42         A_IRR, A_PEST ← degrade_to_safe(A_IRR, A_PEST)
+43     return {A_IRR, A_PEST}
+
+44 function EXECUTE_AND_LOG(A_IRR, A_PEST, A_YLD, A_MKT):
+45     ids1 ← actuate_valves(A_IRR)                  // edge RPC with acks
+46     ids2 ← dispatch_drone(A_PEST)                 // routes + prescriptions
+47     ids3 ← schedule_logistics(A_MKT)              // trucks, slots, buyers
+48     J    ← justify_with_LLM({A_IRR, A_PEST, A_MKT}, inputs=hash_inputs())
+49     Hsh  ← anchor_provenance({ids1, ids2, ids3, J})
+50     write_audit({A_IRR, A_PEST, A_YLD, A_MKT, J, Hsh})
+51     return {ids1, ids2, ids3, Hsh}
+
+52 // === Main orchestration ===
+53 function ANGURAM_ACT_MAIN(S, I_UAV, I_SAT, T, W_f, Π, 𝓜, Σ):
+54     D     ← INGEST_AND_ALIGN(S, I_UAV, I_SAT, T, W_f, Σ)
+55     H,C,Q,Fz ← DIAGNOSE_CROP_HEALTH(D.D_s, D.Ndvi, D.Traps, D.Z, 𝓜)
+56     A_IRR ← PLAN_IRRIGATION(Fz, D.W_f, Π, 𝓜, Σ)
+57     A_PEST← PLAN_PEST_RESPONSE(H, C, D.Traps, Π, 𝓜, D.W_f)
+58     A_YLD ← FORECAST_YIELD(Fz, Σ, 𝓜)
+59     A_MKT ← MARKET_DECISIONS(A_YLD, M=fetch_market(), Π, Σ)
+60     A_IRR, A_PEST ← SAFETY_AND_COMPLIANCE(A_IRR, A_PEST, Π)
+61     ids  ← EXECUTE_AND_LOG(A_IRR, A_PEST, A_YLD, A_MKT)
+62     notify_dashboard({A_IRR, A_PEST, A_YLD, A_MKT, Q}, ids)
+63     return {A_IRR, A_PEST, A_YLD, A_MKT}
+
+Algorithm 1: AI-DRIVEN PERSONALIZED AIR QUALITY RISK MANAGEMENT: A GEOSPATIAL HEALTH PREDICTION AND ALERT SYSTEM
+
+Input:
+    s = {PM, NO2, SO2, TEMP, HUM, HR, SPO2, BR}    // Environmental & wearable sensors
+    geo_db, sat_img, cloud, ai_model               // Geospatial DB, satellite imagery, cloud storage, AI prediction model
+Output:
+    risk_score, alert_msg, hist_log, pred_trend
+
+1.  function COLLECT_DATA(sources)
+2.       dl ← []
+3.       for each src ∈ sources do
+4.            d ← read(src)
+5.            append(dl, d)
+6.       end for
+7.       return dl
+8.  end function
+
+9.  function PROCESS_ENV_DATA(dl)
+10.      pm  ← extract(dl, "PM")       // PM2.5
+11.      n2  ← extract(dl, "NO2")      // Nitrogen Dioxide
+12.      so2 ← extract(dl, "SO2")      // Sulphur Dioxide
+13.      t   ← extract(dl, "TEMP")     // Temperature
+14.      h   ← extract(dl, "HUM")      // Humidity
+15.      geo ← get_location()
+16.      if pm > pm_th or n2 > n2_th or so2 > so2_th then
+17.           alert("High Pollution Risk")
+18.      end if
+19.      send_to_cloud({pm, n2, so2, t, h, geo})
+20.  end function
+
+21. function PROCESS_HEALTH_DATA(dl)
+22.      hr   ← extract(dl, "HR")      // Heart Rate
+23.      sp   ← extract(dl, "SPO2")    // Blood Oxygen
+24.      br   ← extract(dl, "BR")      // Breathing Rate
+25.      if sp < sp_th or br > br_th then
+26.           alert("Respiratory Distress Detected")
+27.      end if
+28.      send_to_cloud({hr, sp, br})
+29.  end function
+
+30. function AI_RISK_ASSESSMENT(env_data, health_data)
+31.      m ← load(ai_model)
+32.      pred ← m.predict({env_data, health_data, geo, ts})
+33.      risk_score ← pred.score
+34.      if risk_score ≥ risk_th then
+35.           alert("High Personal Health Risk")
+36.      end if
+37.      log("RISK_ASSESSMENT", {risk_score, ts})
+38.      return risk_score
+39.  end function
+
+40. function GEO_ALERT_SYSTEM(geo, risk_score)
+41.      hotzones ← fetch_hotspots(geo_db, sat_img)
+42.      if geo ∈ hotzones and risk_score ≥ risk_th then
+43.           push_notification("Avoid Area", geo)
+44.      end if
+45.      map_update(hotzones)
+46.  end function
+
+47. function PREDICT_TREND(hist_data)
+48.      m ← load("trend_model")
+49.      forecast ← m.predict(hist_data)
+50.      return forecast
+51.  end function
+
+52. function CLOUD_ENGINE()
+53.      hist_data ← get_hist()
+54.      train_models(env_data, health_data)
+55.      pred_trend ← PREDICT_TREND(hist_data)
+56.      update_dashboard(hist_data, pred_trend)
+57.      notify_users(pred_trend)
+58.  end function
+
+Algorithm 1: Decentralized Stablecoin Minting and Yield Distribution Using Tokenized Real-World Assets: An Integrated On-Chain Architecture
+
+Input:
+       nft = {NFT₁, NFT₂, ..., NFTₙ}  // Tokenized Real-World Assets (ERC-721)
+  oracle, vault, yieldEngine, dashboard
+Output:
+        rwaUSD tokens, yield logs, audit report
+
+1.   function VERIFY_RWA(nft)
+2.        meta ← fetch_metadata(nft)
+3.        nav ← get_price(oracle, meta.asset_id)
+4.        if nav == null or is_expired(nav) then
+5.             reject("NAV Unavailable")
+6.             log("REJECTED", nft.id)
+7.             return
+8.        end if
+9.        proof ← verify_custodian(meta.custodian, meta.proof_hash)
+10.       if proof ≠ valid then
+11.            reject("Invalid Custodian Proof")
+12.            log("REJECTED", nft.id)
+13.            return
+14.       end if
+15.       log("VERIFIED", nft.id)
+16.       return nav
+17.  end function
+
+18.  function MINT_RWAUSD(nft, nav)
+19.       cr ← get_collateral_ratio(meta.asset_type)    // e.g., 150%
+20.       mint_amt ← nav / cr
+21.       if mint_amt ≤ 0 then
+22.            reject("Insufficient Value")
+23.            return
+24.       end if
+25.       lock_in_vault(nft)
+26.       rwaUSD ← mint_token(mint_amt)
+27.       log("MINTED", rwaUSD, nft.id)
+28.       return rwaUSD
+29.  end function
+
+30.  function DISTRIBUTE_YIELD(vault)
+31.       rwa_set ← get_locked_assets(vault)
+32.       for each asset ∈ rwa_set do
+33.            y ← calculate_yield(asset)
+34.            if y > 0 then
+35.                 distribute(asset.holder, y)
+36.                 log("YIELD", asset.id, y)
+37.            end if
+38.       end for
+39.       update_dashboard(vault)
+40.  end function
+
+41.  function BURN_AND_REDEEM(holder, rwaUSD)
+42.       nft ← get_locked_nft(holder)
+43.       burn(rwaUSD)
+44.       release_from_vault(nft)
+45.       log("REDEEMED", nft.id)
+46.       return nft
+47.  end function
+
+48.  function RESERVE_AUDIT()
+49.       root ← merkle_root(vault.nft_data)
+50.       proof ← hash(root)
+51.       publish_on_chain(proof)
+52.       log("AUDIT_PROOF", timestamp)
+53.       return proof
+54.  end function
+
+55.  function YIELD_PREDICTOR()
+56.       y_model ← load_model("yield_predictor")
+57.       preds ← y_model.predict(vault.data)
+58.       log("PREDICTED_YIELD", preds)
+59.       return preds
+60.  end function
+
+61.  function DASHBOARD_ENGINE()
+62.       u ← fetch_user_data()
+63.       t ← fetch_transaction_logs()
+64.       render_visuals(u, t)
+65.       alert_if_under_collateralized(u)
+66.       display_proof_hashes()
+67.  end function

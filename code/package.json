@@ -1,0 +1,66 @@
+{
+  "name": "@r-huijts/ethics-vibe-check",
+  "version": "1.0.2",
+  "description": "🛡️ Make AI interrupt itself and challenge your thinking. Turns Claude into a philosophical sparring partner who actively contradicts comfortable conversations and challenges confirmation bias.",
+  "main": "build/index.js",
+  "bin": {
+    "ethics-vibe-check": "build/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "dev": "npm run build && node build/index.js",
+    "start": "node build/index.js",
+    "test": "node test-ethics.js",
+    "test:storage": "node storage-analysis.js",
+    "test:curl": "curl -X POST http://localhost:3000/test -H \"Content-Type: application/json\" -d '{\"test\": true}'",
+    "test:all": "npm run build && npm run test && npm run test:storage",
+    "test:quick": "npm run build && echo 'Quick test: Build successful'",
+    "prepublishOnly": "npm run build",
+    "generate-deeplink": "node generate-cursor-link.js"
+  },
+  "keywords": [
+    "ai-ethics",
+    "ethical-ai",
+    "confirmation-bias",
+    "pattern-recognition",
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "cursor",
+    "ethics-oversight",
+    "bias-detection",
+    "critical-thinking",
+    "automated-learning"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/ethics-check-mcp.git"
+  },
+  "homepage": "https://github.com/yourusername/ethics-check-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/yourusername/ethics-check-mcp/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "build/",
+    "README.md",
+    "USAGE.md",
+    "LICENSE",
+    "env.example",
+    "generate-cursor-link.js"
+  ],
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@modelcontextprotocol/sdk": "^1.0.2",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+} 

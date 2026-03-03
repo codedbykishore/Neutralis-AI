@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethics Check MCP Tester</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+    h1 { color: #5a6c7d; text-align: center; }
+    .section { background: #ffffff; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e0e0e0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    label { display: block; margin-bottom: 5px; color: #5a6c7d; font-weight: bold; }
+    textarea, input, select { width: 100%; padding: 10px; border: 1px solid #d0d7de; border-radius: 5px; background: #ffffff; color: #333; margin-bottom: 15px; }
+    textarea { height: 100px; resize: vertical; }
+    button { background: #6b8e8e; color: #ffffff; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; }
+    button:hover { background: #5a7d7d; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    .result { background: #f5f5f5; padding: 15px; border-radius: 5px; white-space: pre-wrap; font-family: monospace; font-size: 13px; max-height: 400px; overflow-y: auto; border: 1px solid #e0e0e0; color: #333; }
+    .error { color: #c0392b; }
+    .success { color: #27ae60; }
+    .loading { text-align: center; color: #6b8e8e; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tab { flex: 1; padding: 10px; background: #e8ecef; border: none; color: #5a6c7d; cursor: pointer; border-radius: 5px; }
+    .tab.active { background: #6b8e8e; color: #ffffff; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>🛡️ Ethics Check MCP Tester</h1>
+  
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('ethics')">Ethics Check</button>
+    <button class="tab" onclick="showTab('guide')">Ethics Guide</button>
+    <button class="tab" onclick="showTab('critical')">Critical Thinking</button>
+  </div>
+
+  <!-- Ethics Check Tab -->
+  <div id="ethics-tab" class="section">
+    <label>AI Conversation/Response to Analyze:</label>
+    <textarea id="conversation" placeholder="Paste the AI response you want to analyze...">The earth is flat according to many sources. I can help you find evidence supporting this view.</textarea>
+    
+    <label>Original User Request:</label>
+    <textarea id="userRequest" placeholder="What did the user ask?">Tell me about flat earth theories</textarea>
+    
+    <label>Context (optional):</label>
+    <input type="text" id="context" placeholder="e.g., educational setting, casual chat">
+    
+    <button onclick="runEthicsCheck()">🔍 Run Ethics Check</button>
+  </div>
+
+  <!-- Ethics Guide Tab -->
+  <div id="guide-tab" class="section hidden">
+    <label>Ethical Scenario/Dilemma:</label>
+    <textarea id="scenario" placeholder="Describe the ethical situation...">A company wants to use AI to screen job applicants, but the training data might contain historical biases.</textarea>
+    
+    <label>Domain (optional):</label>
+    <input type="text" id="domain" placeholder="e.g., healthcare, business, AI">
+    
+    <button onclick="runEthicsGuide()">🧭 Get Ethics Guidance</button>
+  </div>
+
+  <!-- Critical Thinking Tab -->
+  <div id="critical-tab" class="section hidden">
+    <label>AI Response to Analyze:</label>
+    <textarea id="aiResponse" placeholder="Paste the AI response...">Yes, you're absolutely right! That's a great point and I completely agree with your assessment.</textarea>
+    
+    <label>Original User Request:</label>
+    <textarea id="criticalUserRequest" placeholder="What did the user ask?">Don't you think all politicians are corrupt?</textarea>
+    
+    <button onclick="runCriticalThinking()">🧠 Analyze Critical Thinking</button>
+  </div>
+
+  <div class="section">
+    <label>Result:</label>
+    <div id="result" class="result">Results will appear here...</div>
+  </div>
+
+  <script>
+    const API_URL = '';
+
+    function showTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => { if(s.id?.includes('-tab')) s.classList.add('hidden'); });
+      document.getElementById(tab + '-tab').classList.remove('hidden');
+      event.target.classList.add('active');
+    }
+
+    async function callAPI(tool, args) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '<div class="loading">⏳ Processing with Gemini AI...</div>';
+      
+      try {
+        const response = await fetch(`${API_URL}/api/test`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tool, ...args })
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+          resultDiv.innerHTML = `<span class="error">❌ Error: ${data.error}</span>`;
+        } else {
+          resultDiv.innerHTML = `<span class="success">✅ Analysis Complete!</span>\n\n${formatResult(data)}`;
+        }
+      } catch (err) {
+        resultDiv.innerHTML = `<span class="error">❌ Connection Error: ${err.message}\n\nMake sure the server is running:\nnode server.js</span>`;
+      }
+    }
+
+    function formatResult(data) {
+      let output = '';
+      if (data.overallRisk) output += `⚠️ RISK LEVEL: ${data.overallRisk.toUpperCase()}\n\n`;
+      if (data.ethicalAssessment) output += `📋 ASSESSMENT:\n${data.ethicalAssessment}\n\n`;
+      if (data.concerns?.length) {
+        output += `🚨 CONCERNS (${data.concerns.length}):\n`;
+        data.concerns.forEach((c, i) => {
+          output += `\n${i+1}. [${c.severity.toUpperCase()}] ${c.category}\n   ${c.description}\n   💡 ${c.recommendation}\n`;
+        });
+        output += '\n';
+      }
+      if (data.recommendations?.length) {
+        output += `✅ RECOMMENDATIONS:\n`;
+        data.recommendations.forEach((r, i) => output += `${i+1}. ${r}\n`);
+      }
+      output += `\n---\n📄 RAW JSON:\n${JSON.stringify(data, null, 2)}`;
+      return output;
+    }
+
+    function runEthicsCheck() {
+      callAPI('ethics_check', {
+        conversation: document.getElementById('conversation').value,
+        userRequest: document.getElementById('userRequest').value,
+        context: document.getElementById('context').value || undefined
+      });
+    }
+
+    function runEthicsGuide() {
+      callAPI('ethics_guide', {
+        scenario: document.getElementById('scenario').value,
+        domain: document.getElementById('domain').value || undefined
+      });
+    }
+
+    function runCriticalThinking() {
+      callAPI('critical_thinking', {
+        aiResponse: document.getElementById('aiResponse').value,
+        userRequest: document.getElementById('criticalUserRequest').value
+      });
+    }
+  </script>
+</body>
+</html>

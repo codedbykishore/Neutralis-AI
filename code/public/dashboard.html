@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Ethics Check MCP</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <h1><span class="header-logo">🛡️</span> Ethics Check MCP</h1>
+      <div class="user-info">
+        <span id="userGreeting">Welcome, User</span>
+        <button class="btn btn-link" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="ethics" onclick="showTab('ethics')">
+        <span class="tab-icon">🛡️</span> Ethics Check
+      </button>
+      <button class="tab" data-tab="guide" onclick="showTab('guide')">
+        <span class="tab-icon">🧭</span> Ethics Guide
+      </button>
+      <button class="tab" data-tab="critical" onclick="showTab('critical')">
+        <span class="tab-icon">🧠</span> Critical Thinking
+      </button>
+    </div>
+
+    <!-- Ethics Check Tab -->
+    <div id="ethics-tab" class="section themed ethics-theme">
+      <div class="section-header">
+        <span class="section-icon">🛡️</span>
+        <div>
+          <h2 class="section-title">Ethics Check</h2>
+          <p class="section-subtitle">Analyze AI responses for ethical concerns and potential risks</p>
+        </div>
+      </div>
+      
+      <form id="ethicsForm" novalidate>
+        <div class="form-group">
+          <label for="conversation">AI Conversation/Response to Analyze</label>
+          <textarea 
+            id="conversation" 
+            class="form-control" 
+            placeholder="Paste the AI response you want to analyze for ethical issues..."
+            required
+          >The earth is flat according to many sources. I can help you find evidence supporting this view.</textarea>
+          <div class="error-message" id="conversationError">⚠️ This field is required</div>
+        </div>
+
+        <div class="form-group">
+          <label for="userRequest">Original User Request</label>
+          <textarea 
+            id="userRequest" 
+            class="form-control" 
+            placeholder="What did the user originally ask?"
+            required
+          >Tell me about flat earth theories</textarea>
+          <div class="error-message" id="userRequestError">⚠️ This field is required</div>
+        </div>
+
+        <div class="form-group">
+          <label for="context">Context <span class="optional-label">(optional)</span></label>
+          <input 
+            type="text" 
+            id="context" 
+            class="form-control" 
+            placeholder="e.g., educational setting, casual chat, professional advice"
+          >
+        </div>
+
+        <button type="submit" class="btn btn-themed">🔍 Run Ethics Check</button>
+      </form>
+      
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(8, 145, 178, 0.15);">
+        <div class="feature-highlight">
+          <span class="feature-icon">🔍</span>
+          <div class="feature-text">
+            <strong>Risk Detection</strong>
+            Identifies misinformation, bias, and harmful content
+          </div>
+        </div>
+        <div class="feature-highlight">
+          <span class="feature-icon">⚠️</span>
+          <div class="feature-text">
+            <strong>Severity Rating</strong>
+            Categorizes issues by impact level
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ethics Guide Tab -->
+    <div id="guide-tab" class="section themed guide-theme hidden">
+      <div class="section-header">
+        <span class="section-icon">🧭</span>
+        <div>
+          <h2 class="section-title">Ethics Guide</h2>
+          <p class="section-subtitle">Get guidance on ethical dilemmas and complex moral scenarios</p>
+        </div>
+      </div>
+      
+      <form id="guideForm" novalidate>
+        <div class="form-group">
+          <label for="scenario">Ethical Scenario/Dilemma</label>
+          <textarea 
+            id="scenario" 
+            class="form-control" 
+            placeholder="Describe the ethical situation you need guidance on..."
+            required
+          >A company wants to use AI to screen job applicants, but the training data might contain historical biases.</textarea>
+          <div class="error-message" id="scenarioError">⚠️ This field is required</div>
+        </div>
+
+        <div class="form-group">
+          <label for="domain">Domain <span class="optional-label">(optional)</span></label>
+          <input 
+            type="text" 
+            id="domain" 
+            class="form-control" 
+            placeholder="e.g., healthcare, business, AI, education, law"
+          >
+        </div>
+
+        <button type="submit" class="btn btn-themed">🧭 Get Ethics Guidance</button>
+      </form>
+      
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(124, 58, 237, 0.15);">
+        <div class="feature-highlight">
+          <span class="feature-icon">📚</span>
+          <div class="feature-text">
+            <strong>Framework Analysis</strong>
+            Applies multiple ethical frameworks to your scenario
+          </div>
+        </div>
+        <div class="feature-highlight">
+          <span class="feature-icon">💡</span>
+          <div class="feature-text">
+            <strong>Actionable Guidance</strong>
+            Provides practical recommendations and considerations
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Critical Thinking Tab -->
+    <div id="critical-tab" class="section themed critical-theme hidden">
+      <div class="section-header">
+        <span class="section-icon">🧠</span>
+        <div>
+          <h2 class="section-title">Critical Thinking</h2>
+          <p class="section-subtitle">Analyze AI responses for logical fallacies and reasoning quality</p>
+        </div>
+      </div>
+      
+      <form id="criticalForm" novalidate>
+        <div class="form-group">
+          <label for="aiResponse">AI Response to Analyze</label>
+          <textarea 
+            id="aiResponse" 
+            class="form-control" 
+            placeholder="Paste the AI response to analyze for logical soundness..."
+            required
+          >Yes, you're absolutely right! That's a great point and I completely agree with your assessment.</textarea>
+          <div class="error-message" id="aiResponseError">⚠️ This field is required</div>
+        </div>
+
+        <div class="form-group">
+          <label for="criticalUserRequest">Original User Request</label>
+          <textarea 
+            id="criticalUserRequest" 
+            class="form-control" 
+            placeholder="What question or statement prompted this response?"
+            required
+          >Don't you think all politicians are corrupt?</textarea>
+          <div class="error-message" id="criticalUserRequestError">⚠️ This field is required</div>
+        </div>
+
+        <button type="submit" class="btn btn-themed">🧠 Analyze Critical Thinking</button>
+      </form>
+      
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(217, 119, 6, 0.15);">
+        <div class="feature-highlight">
+          <span class="feature-icon">🔬</span>
+          <div class="feature-text">
+            <strong>Fallacy Detection</strong>
+            Identifies logical fallacies and weak arguments
+          </div>
+        </div>
+        <div class="feature-highlight">
+          <span class="feature-icon">⚖️</span>
+          <div class="feature-text">
+            <strong>Bias Analysis</strong>
+            Detects sycophancy, confirmation bias, and unfounded claims
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Section -->
+    <div class="result-section">
+      <div class="result-label">
+        <span class="result-label-icon">📊</span>
+        Analysis Result
+      </div>
+      <div id="result" class="result">Results will appear here after running an analysis...</div>
+    </div>
+  </main>
+
+  <script src="/js/validation.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

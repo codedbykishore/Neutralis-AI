@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Ethics Check MCP</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="page-center">
+    <div class="card card-sm">
+      <div class="card-header">
+        <h1>🛡️ Ethics Check</h1>
+        <p>Sign in to access the dashboard</p>
+      </div>
+
+      <div id="alert" class="alert alert-error" style="display: none;"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            class="form-control" 
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+          >
+          <div class="error-message" id="emailError">Please enter a valid email address</div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-control" 
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+          <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;">
+            <input type="checkbox" id="rememberMe" name="rememberMe">
+            Remember me
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <span id="btnText">Sign In</span>
+          <span id="btnSpinner" class="spinner" style="display: none;"></span>
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p style="color: var(--text-muted); font-size: 0.85rem;">
+          Demo credentials: <strong>demo@ethics.io</strong> / <strong>demo123</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/validation.js"></script>
+  <script src="/js/login.js"></script>
+</body>
+</html>

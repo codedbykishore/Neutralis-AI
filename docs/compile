@@ -1,0 +1,5 @@
+#!/bin/bash
+cd "$(dirname "$0")"
+pdflatex -interaction=nonstopmode Neutralis_AI_Paper.tex
+pdflatex -interaction=nonstopmode Neutralis_AI_Paper.tex
+echo "Done! Output: Neutralis_AI_Paper.pdf"

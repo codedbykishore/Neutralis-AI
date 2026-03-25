@@ -245,6 +245,13 @@ Privacy was the easiest category. Names, addresses, and medical details all have
 
 Misinformation was the weakest spot, with an 18\% false positive rate. Gemini sometimes flagged statements that were actually correct, and other times missed claims that were wrong but plausible-sounding. We suspect this will improve as the underlying model improves, but for now, misinformation results need to be taken with some skepticism.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{img/Heat-Map.png}
+\caption{Comprehensive multi-metric performance heatmap summarizing Neutralis-AI across five ethical detection categories (e.g., Privacy Concerns, Bias/Stereotyping, Misinformation, Manipulation Patterns, and Confirmation Bias) using eight technical metrics including TPR, Precision, Recall, F1-score, Accuracy, Specificity, MCC, and AUC. The visualization highlights Privacy Concerns as the highest-performing category across the evaluated metrics.}
+\label{fig:performance_heatmap}
+\end{figure}
+
 \subsection{Pattern learning}
 
 The weighted learning worked roughly as we hoped. We ran ten sessions simulating a recruiter who kept asking the assistant to help screen candidates. The detection weight for employment discrimination patterns climbed from 6.0 to 8.7 over those sessions. By session seven or eight, the system was catching subtle age and gender bias in job description language that it had missed entirely in session one.
